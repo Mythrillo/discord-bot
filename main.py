@@ -3,17 +3,20 @@ import discord
 from dotenv import load_dotenv
 import random
 from discord.ext import commands
+
 load_dotenv()
 
-TOKEN = os.getenv('DISCORD_TOKEN')
+TOKEN = os.getenv("DISCORD_TOKEN")
 intents = discord.Intents().all()
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
-@bot.command(name='testKarola')
+
+@bot.command(name="ping")
 async def on_message(ctx):
-        await ctx.send("Pykło")
+    await ctx.send("pong")
 
-@bot.command(name='generuj')
+
+@bot.command(name="generuj")
 async def on_message(ctx, number_of_teams=2, game=None):
     number_of_teams = int(number_of_teams)
     if number_of_teams < 2:
@@ -52,25 +55,35 @@ async def on_message(ctx, number_of_teams=2, game=None):
             tmp = random.random()
             choosen = False
             if game == None:
-                await ctx.send("Drużyna: " + str(k+1) + "\n" + "\n".join([str(i) for i in team]))
+                await ctx.send(
+                    "Drużyna: " + str(k + 1) + "\n" + "\n".join([str(i) for i in team])
+                )
                 k += 1
             elif game == "cs" and number_of_teams == 2:
                 if tmp > 0.5:
-                    await ctx.send("Terroryści: " + "\n" + "\n".join([str(i) for i in team]))
+                    await ctx.send(
+                        "Terroryści: " + "\n" + "\n".join([str(i) for i in team])
+                    )
                     choosen = True
                 else:
-                    await ctx.send("Antyterroryści: " + "\n" + "\n".join([str(i) for i in team]))
+                    await ctx.send(
+                        "Antyterroryści: " + "\n" + "\n".join([str(i) for i in team])
+                    )
                     choosen = False
             elif game == "lol" and number_of_teams == 2:
                 if tmp > 0.5:
-                    await ctx.send("Blue side: " + "\n" + "\n".join([str(i) for i in team]))
+                    await ctx.send(
+                        "Blue side: " + "\n" + "\n".join([str(i) for i in team])
+                    )
                     choosen = True
                 else:
-                    await ctx.send("Red side: " + "\n" + "\n".join([str(i) for i in team]))
+                    await ctx.send(
+                        "Red side: " + "\n" + "\n".join([str(i) for i in team])
+                    )
                     choosen = False
-
 
     else:
         await ctx.send("Debilu nie jesteś w kanale dźwiękowym. Weź sie ogarnij.")
+
 
 bot.run(TOKEN)
