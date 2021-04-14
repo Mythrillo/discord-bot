@@ -71,6 +71,6 @@ async def on_message(ctx, number_of_teams=2, game=None):
 
 
     else:
-        await ctx.send("Debilu nie jesteś w kanale dźwiękowym. Weź sie ogarnij :dababy:.")
+        await ctx.send("Debilu nie jesteś w kanale dźwiękowym. Weź sie ogarnij :sus:.")
 
 bot.run(TOKEN)
