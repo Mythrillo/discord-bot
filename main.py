@@ -11,9 +11,9 @@ intents = discord.Intents().all()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 
-@bot.command(name="ping")
+@bot.command(name="olek")
 async def on_message(ctx):
-    await ctx.send("pong")
+    await ctx.send("to cwel",delete_after=5)
 
 
 @bot.command(name="generuj")
