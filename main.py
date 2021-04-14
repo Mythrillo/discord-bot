@@ -52,7 +52,7 @@ async def on_message(ctx, number_of_teams=2, game=None):
             tmp = random.random()
             choosen = False
             if game == None:
-                await ctx.send("Drużyna debili: " + str(k+1) + "\n" + "\n".join([str(i) for i in team]))
+                await ctx.send("Drużyna: " + str(k+1) + "\n" + "\n".join([str(i) for i in team]))
                 k += 1
             elif game == "cs" and number_of_teams == 2:
                 if tmp > 0.5:
