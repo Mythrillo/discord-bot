@@ -9,6 +9,10 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+@bot.command(name='testKarola')
+async def on_message(ctx):
+        await ctx.send("Pykło")
+
 @bot.command(name='generuj')
 async def on_message(ctx, number_of_teams=2, game=None):
     number_of_teams = int(number_of_teams)
