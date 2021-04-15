@@ -25,7 +25,7 @@ async def on_message(ctx, number_of_teams=2, game=None):
         channel = ctx.guild.get_channel(ctx.author.voice.channel.id)
         channel_members = channel.members
         for i in range(len(channel_members)):
-            if channel_members[i].bot == True:
+            if channel_members[i].bot:
                 channel_members.pop(i)
         number_of_members = len(channel_members)
         if number_of_teams > number_of_members:
@@ -53,8 +53,7 @@ async def on_message(ctx, number_of_teams=2, game=None):
         k = 0
         for team in teams:
             tmp = random.random()
-            choosen = False
-            if game == None:
+            if game is None:
                 await ctx.send(
                     "Drużyna: " + str(k + 1) + "\n" + "\n".join([str(i) for i in team])
                 )
@@ -64,24 +63,19 @@ async def on_message(ctx, number_of_teams=2, game=None):
                     await ctx.send(
                         "Terroryści: " + "\n" + "\n".join([str(i) for i in team])
                     )
-                    choosen = True
                 else:
                     await ctx.send(
                         "Antyterroryści: " + "\n" + "\n".join([str(i) for i in team])
                     )
-                    choosen = False
             elif game == "lol" and number_of_teams == 2:
                 if tmp > 0.5:
                     await ctx.send(
                         "Blue side: " + "\n" + "\n".join([str(i) for i in team])
                     )
-                    choosen = True
                 else:
                     await ctx.send(
                         "Red side: " + "\n" + "\n".join([str(i) for i in team])
                     )
-                    choosen = False
-
     else:
         await ctx.send("Debilu nie jesteś w kanale dźwiękowym. Weź sie ogarnij.")
 
