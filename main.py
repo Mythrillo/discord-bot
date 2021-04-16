@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import random
 from discord.ext import commands
 
+
 load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -52,14 +53,13 @@ async def on_message(ctx, number_of_teams=2, game=None):
                 teams.append(team)
         k = 0
         for team in teams:
-            tmp = random.random()
             if game is None:
                 await ctx.send(
                     "Drużyna: " + str(k + 1) + "\n" + "\n".join([str(i) for i in team])
                 )
                 k += 1
             elif game == "cs" and number_of_teams == 2:
-                if tmp > 0.5:
+                if k == 0:
                     await ctx.send(
                         "Terroryści: " + "\n" + "\n".join([str(i) for i in team])
                     )
@@ -68,7 +68,7 @@ async def on_message(ctx, number_of_teams=2, game=None):
                         "Antyterroryści: " + "\n" + "\n".join([str(i) for i in team])
                     )
             elif game == "lol" and number_of_teams == 2:
-                if tmp > 0.5:
+                if k == 0:
                     await ctx.send(
                         "Blue side: " + "\n" + "\n".join([str(i) for i in team])
                     )
