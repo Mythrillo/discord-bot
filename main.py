@@ -60,6 +60,7 @@ async def on_message(ctx, number_of_teams=2, game=None):
                 k += 1
             elif game == "cs" and number_of_teams == 2:
                 if k == 0:
+                    k += 1
                     await ctx.send(
                         "Terroryści: " + "\n" + "\n".join([str(i) for i in team])
                     )
@@ -69,6 +70,7 @@ async def on_message(ctx, number_of_teams=2, game=None):
                     )
             elif game == "lol" and number_of_teams == 2:
                 if k == 0:
+                    k += 1
                     await ctx.send(
                         "Blue side: " + "\n" + "\n".join([str(i) for i in team])
                     )
