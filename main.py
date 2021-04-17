@@ -1,8 +1,12 @@
 import os
 import discord
+import io
+import aiohttp
 from dotenv import load_dotenv
 import random
 from discord.ext import commands
+import bs4 as bs
+from urllib.request import urlopen
 
 
 load_dotenv()
@@ -15,6 +19,21 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 @bot.command(name="olek")
 async def on_message(ctx):
     await ctx.send("to cwel",delete_after=5)
+
+
+@bot.command(name="anime")
+async def on_message(ctx):
+    # Ściąga losowy obrazek z safebooru.org
+    query = urlopen("https://safebooru.org/index.php?page=post&s=random")
+    soup = bs.BeautifulSoup(query, "html.parser")
+    image = soup.find(id="image").get("src")
+    async with aiohttp.ClientSession() as session:
+        async with session.get(image) as resp:
+            if resp.status != 200:
+                await ctx.send("Nie da się ściagnąć ;(")
+                return
+            data = io.BytesIO(await resp.read())
+            await ctx.send(file=discord.File(data, 'Super-obrazek.png'))
 
 
 @bot.command(name="generuj")
