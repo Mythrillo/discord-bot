@@ -33,13 +33,13 @@ async def on_message(ctx, *args):
             tag = "_".join(args).lower()
         else:
             tag = args[0]
-        query = urlopen("https://gelbooru.com/index.php?page=dapi&s=post&limit=1&q=index&tags=" + tag  + " -loli")
+        query = urlopen("https://gelbooru.com/index.php?page=dapi&s=post&limit=1&q=index&tags=" + tag + "%20-loli")
         soup = bs.BeautifulSoup(query, "html.parser")
         count = int(soup.find("posts").get("count"))
         if count == 0:
             # Próba znalezenia podobnego tagu
             tag += "~"
-            query = urlopen("https://gelbooru.com/index.php?page=dapi&s=post&limit=1&q=index&tags=" + tag  + " -loli")
+            query = urlopen("https://gelbooru.com/index.php?page=dapi&s=post&limit=1&q=index&tags=" + tag + "%20-loli")
             soup = bs.BeautifulSoup(query, "html.parser")
             count = int(soup.find("posts").get("count"))
             if count == 0:
@@ -51,7 +51,7 @@ async def on_message(ctx, *args):
             pid = random.randint(0, int(count / 100))
 
         query = urlopen("https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&pid=" + str(pid)
-                        + "&tags=" + tag  + " -loli")
+                        + "&tags=" + tag + "%20-loli")
         soup = bs.BeautifulSoup(query, "html.parser")
         posts = soup.find_all("post")
         r = random.randint(0, len(posts)-1)
@@ -68,12 +68,17 @@ async def on_message(ctx, *args):
 
 @bot.command(name="safeAnime")
 async def on_message(ctx, *args):
+
     # Ściąga losowy obrazek z safebooru.org lub losowe zdjęcie z zadanego tagu
     if not args:
         query = urlopen("https://safebooru.org/index.php?page=post&s=random")
         soup = bs.BeautifulSoup(query, "html.parser")
         image = soup.find(id="image").get("src")
     else:
+        if len(args) > 1:
+            tag = "_".join(args).lower()
+        else:
+            tag = args[0]
         tag = "_".join(args).lower()
         query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
         soup = bs.BeautifulSoup(query, "html.parser")
