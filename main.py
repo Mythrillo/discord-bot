@@ -35,7 +35,7 @@ async def on_message(ctx, *args):
         count = int(soup.find("posts").get("count"))
         if count == 0:
             # Próba znalezenia podobnego tagu
-            tag += "*"
+            tag += "~"
             query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
             soup = bs.BeautifulSoup(query, "html.parser")
             count = int(soup.find("posts").get("count"))
