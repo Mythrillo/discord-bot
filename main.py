@@ -75,13 +75,13 @@ async def on_message(ctx, *args):
         image = soup.find(id="image").get("src")
     else:
         tag = "_".join(args).lower()
-        query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
+        query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag + " -loli")
         soup = bs.BeautifulSoup(query, "html.parser")
         count = int(soup.find("posts").get("count"))
         if count == 0:
             # Próba znalezenia podobnego tagu
             tag += "~"
-            query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
+            query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag + " -loli")
             soup = bs.BeautifulSoup(query, "html.parser")
             count = int(soup.find("posts").get("count"))
             if count == 0:
@@ -93,7 +93,7 @@ async def on_message(ctx, *args):
         else:
             pid = random.randint(0, int(count / 100))
         query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=100&pid=" + str(pid)
-                        + "&tags=" + tag)
+                        + "&tags=" + tag + " -loli")
         soup = bs.BeautifulSoup(query, "html.parser")
         posts = soup.find_all("post")
         r = random.randint(0, len(posts)-1)
