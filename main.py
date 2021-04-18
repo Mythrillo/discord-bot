@@ -22,11 +22,27 @@ async def on_message(ctx):
 
 
 @bot.command(name="anime")
-async def on_message(ctx):
-    # Ściąga losowy obrazek z safebooru.org
-    query = urlopen("https://safebooru.org/index.php?page=post&s=random")
-    soup = bs.BeautifulSoup(query, "html.parser")
-    image = soup.find(id="image").get("src")
+async def on_message(ctx, *args):
+    # Ściąga losowy obrazek z safebooru.org lub losowe zdjęcie z zadanego tagu
+    if args == None:
+        query = urlopen("https://safebooru.org/index.php?page=post&s=random")
+        soup = bs.BeautifulSoup(query, "html.parser")
+        image = soup.find(id="image").get("src")
+    else:
+        tag = "_".join(args).lower() + "*"
+        query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
+        soup = bs.BeautifulSoup(query, "html.parser")
+        count = int(soup.find("posts").get("count"))
+        if count == 0:
+            await ctx.send("Nie ma obrazka z tym tagiem")
+            return
+        pid = random.randint(0, int(count / 100))
+        query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=100&pid=" + str(pid) + "&tags=" + tag)
+        soup = bs.BeautifulSoup(query, "html.parser")
+        posts = soup.find_all("post")
+        r = random.randint(0, len(posts)-1)
+        post = posts[r]
+        image = post.get("file_url")
     async with aiohttp.ClientSession() as session:
         async with session.get(image) as resp:
             if resp.status != 200:
