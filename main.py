@@ -29,15 +29,22 @@ async def on_message(ctx, *args):
         soup = bs.BeautifulSoup(query, "html.parser")
         image = soup.find(id="image").get("src")
     else:
-        tag = "_".join(args).lower() + "*"
+        tag = "_".join(args).lower()
         query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
         soup = bs.BeautifulSoup(query, "html.parser")
         count = int(soup.find("posts").get("count"))
         if count == 0:
-            await ctx.send("Nie ma obrazka z tym tagiem")
-            return
+            # Próba znalezenia podobnego tagu
+            tag += "*"
+            query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
+            soup = bs.BeautifulSoup(query, "html.parser")
+            count = int(soup.find("posts").get("count"))
+            if count == 0:
+                await ctx.send("Nie ma obrazka z tym tagiem")
+                return
         pid = random.randint(0, int(count / 100))
-        query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=100&pid=" + str(pid) + "&tags=" + tag)
+        query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=100&pid=" + str(pid)
+                        + "&tags=" + tag)
         soup = bs.BeautifulSoup(query, "html.parser")
         posts = soup.find_all("post")
         r = random.randint(0, len(posts)-1)
@@ -90,28 +97,28 @@ async def on_message(ctx, number_of_teams=2, game=None):
         for team in teams:
             if game is None:
                 await ctx.send(
-                    "Drużyna: " + str(k + 1) + "\n" + "\n".join([str(i) for i in team])
+                    "Drużyna: " + str(k + 1) + "\n" + "\n".join([i.mention for i in team])
                 )
                 k += 1
             elif game == "cs" and number_of_teams == 2:
                 if k == 0:
                     k += 1
                     await ctx.send(
-                        "Terroryści: " + "\n" + "\n".join([str(i) for i in team])
+                        "Terroryści: " + "\n" + "\n".join([i.mention for i in team])
                     )
                 else:
                     await ctx.send(
-                        "Antyterroryści: " + "\n" + "\n".join([str(i) for i in team])
+                        "Antyterroryści: " + "\n" + "\n".join([i.mention for i in team])
                     )
             elif game == "lol" and number_of_teams == 2:
                 if k == 0:
                     k += 1
                     await ctx.send(
-                        "Blue side: " + "\n" + "\n".join([str(i) for i in team])
+                        "Blue side: " + "\n" + "\n".join([i.mention for i in team])
                     )
                 else:
                     await ctx.send(
-                        "Red side: " + "\n" + "\n".join([str(i) for i in team])
+                        "Red side: " + "\n" + "\n".join([i.mention for i in team])
                     )
     else:
         await ctx.send("Debilu nie jesteś w kanale dźwiękowym. Weź sie ogarnij.")
