@@ -21,6 +21,26 @@ async def on_message(ctx):
     await ctx.send("to cwel", delete_after=5)
 
 
+@bot.command(name="role")
+async def on_message(ctx):
+    roles = ["Top", "Mid", "Jungle", "Support", "Marksman"]
+    if ctx.author.voice and ctx.author.voice.channel:
+        channel = ctx.guild.get_channel(ctx.author.voice.channel.id)
+        channel_members = channel.members
+        for i in range(len(channel_members)):
+            if channel_members[i].bot:
+                channel_members.pop(i)
+        if len(channel_members) != 5:
+            await ctx.send("Nie ma pięciu osób na kanale")
+            return
+        for i in range(len(channel_members)):
+            r = random.randint(0, len(roles))
+            await ctx.send(channel_members[i].mention + ": " + roles[r] + "\n")
+            roles.pop(r)
+    else:
+        await ctx.send("Debilu nie jesteś w kanale dźwiękowym. Weź sie ogarnij.")
+
+
 @bot.command(name="anime")
 async def on_message(ctx, *args):
     # Ściąga losowy obrazek z gelbooru.com lub losowe zdjęcie z zadanego tagu
