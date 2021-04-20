@@ -31,7 +31,7 @@ async def on_message(ctx):
             if channel_members[i].bot:
                 channel_members.pop(i)
         if len(channel_members) != 5:
-            await ctx.send("Nie ma pięciu osób na kanale")
+            await ctx.send("Nie ma pięciu osób na kanale.")
             return
         for i in range(len(channel_members)):
             r = random.randint(0, len(roles))
@@ -51,19 +51,21 @@ async def on_message(ctx, *args):
     else:
         if len(args) > 1:
             tag = "_".join(args).lower()
+            tag = tag.replace("&", "%20")
         else:
             tag = args[0]
-        query = urlopen("https://gelbooru.com/index.php?page=dapi&s=post&limit=1&q=index&tags=" + tag + "%20-loli")
+        query = urlopen("https://gelbooru.com/index.php?page=dapi&s=post&limit=1&q=index&tags=" + tag + "%20-loli-underage")
         soup = bs.BeautifulSoup(query, "html.parser")
         count = int(soup.find("posts").get("count"))
         if count == 0:
             # Próba znalezenia podobnego tagu
+            await ctx.send("Szukam podobnego tagu.\n")
             tag += "~"
-            query = urlopen("https://gelbooru.com/index.php?page=dapi&s=post&limit=1&q=index&tags=" + tag + "%20-loli")
+            query = urlopen("https://gelbooru.com/index.php?page=dapi&s=post&limit=1&q=index&tags=" + tag + "%20-loli-underage")
             soup = bs.BeautifulSoup(query, "html.parser")
             count = int(soup.find("posts").get("count"))
             if count == 0:
-                await ctx.send("Nie ma obrazka z tym tagiem")
+                await ctx.send("Nie ma obrazka z tym tagiem.")
                 return
         if int(count / 100) > 200:
             pid = random.randint(0, 200)
@@ -71,24 +73,25 @@ async def on_message(ctx, *args):
             pid = random.randint(0, int(count / 100))
 
         query = urlopen("https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&pid=" + str(pid)
-                        + "&tags=" + tag + "%20-loli")
+                        + "&tags=" + tag + "%20-loli-underage")
         soup = bs.BeautifulSoup(query, "html.parser")
         posts = soup.find_all("post")
         r = random.randint(0, len(posts)-1)
         post = posts[r]
         image = post.get("file_url")
+        file_type = image.split(".")[-1]
+
     async with aiohttp.ClientSession() as session:
         async with session.get(image) as resp:
             if resp.status != 200:
                 await ctx.send("Nie da się ściagnąć ;(")
                 return
             data = io.BytesIO(await resp.read())
-            await ctx.send(file=discord.File(data, 'Super-obrazek.png'))
+            await ctx.send(file=discord.File(data, "Super-obrazek." + file_type))
 
 
 @bot.command(name="safeAnime")
 async def on_message(ctx, *args):
-
     # Ściąga losowy obrazek z safebooru.org lub losowe zdjęcie z zadanego tagu
     if not args:
         query = urlopen("https://safebooru.org/index.php?page=post&s=random")
@@ -97,20 +100,21 @@ async def on_message(ctx, *args):
     else:
         if len(args) > 1:
             tag = "_".join(args).lower()
+            tag = tag.replace("&", "%20")
         else:
             tag = args[0]
-        tag = "_".join(args).lower()
         query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
         soup = bs.BeautifulSoup(query, "html.parser")
         count = int(soup.find("posts").get("count"))
         if count == 0:
-            # Próba znalezenia podobnego tagu
+            # Próba znalezenia podobnego
+            await ctx.send("Szukam podobnego tagu.\n")
             tag += "~"
             query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
             soup = bs.BeautifulSoup(query, "html.parser")
             count = int(soup.find("posts").get("count"))
             if count == 0:
-                await ctx.send("Nie ma obrazka z tym tagiem")
+                await ctx.send("Nie ma obrazka z tym tagiem.")
                 return
         # Ustawiamy max = 200 bo nie pozwala na więcej
         if int(count / 100) > 200:
@@ -124,13 +128,14 @@ async def on_message(ctx, *args):
         r = random.randint(0, len(posts)-1)
         post = posts[r]
         image = post.get("file_url")
+        file_type = image.split(".")[-1]
     async with aiohttp.ClientSession() as session:
         async with session.get(image) as resp:
             if resp.status != 200:
                 await ctx.send("Nie da się ściagnąć ;(")
                 return
             data = io.BytesIO(await resp.read())
-            await ctx.send(file=discord.File(data, 'Super-obrazek.png'))
+            await ctx.send(file=discord.File(data, "Super-obrazek." + file_type))
 
 
 @bot.command(name="generuj")
