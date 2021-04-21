@@ -41,6 +41,56 @@ async def on_message(ctx):
         await ctx.send("Debilu nie jesteś w kanale dźwiękowym. Weź sie ogarnij.")
 
 
+@bot.command(name="rule34")
+async def on_message(ctx, *args):
+    # Ściąga losowy obrazek z gelbooru.com lub losowe zdjęcie z zadanego tagu
+    if not args:
+        r = random.randint(0, 999501)
+        query = urlopen("https://rule34.xxx/index.php?page=dapi&s=post&q=index&id=" + str(r))
+        soup = bs.BeautifulSoup(query, "html.parser")
+        post = soup.find("post")
+        image = post.get("file_url")
+    else:
+        if len(args) > 1:
+            tag = "_".join(args).lower()
+            tag = tag.replace("&", "%20")
+        else:
+            tag = args[0]
+        query = urlopen("https://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
+        soup = bs.BeautifulSoup(query, "html.parser")
+        count = int(soup.find("posts").get("count"))
+        if count == 0:
+            # Próba znalezenia podobnego tagu
+            await ctx.send("Szukam podobnego tagu.\n")
+            tag += "~"
+            query = urlopen("https://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=1&tags=" + tag)
+            soup = bs.BeautifulSoup(query, "html.parser")
+            count = int(soup.find("posts").get("count"))
+            if count == 0:
+                await ctx.send("Nie ma obrazka z tym tagiem.")
+                return
+
+        # Na rule34.xxx nie trzeba ograniczać głębokości wyszukiwania
+        pid = random.randint(0, int(count / 100))
+
+        query = urlopen("https://rule34.xxx/index.php?page=dapi&s=post&q=index&pid=" + str(pid)
+                        + "&limit=100&tags=" + tag)
+        soup = bs.BeautifulSoup(query, "html.parser")
+        posts = soup.find_all("post")
+        r = random.randint(0, len(posts)-1)
+        post = posts[r]
+        image = post.get("file_url")
+    file_type = image.split(".")[-1]
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(image) as resp:
+            if resp.status != 200:
+                await ctx.send("Nie da się ściagnąć ;(")
+                return
+            data = io.BytesIO(await resp.read())
+            await ctx.send(file=discord.File(data, "Super-obrazek." + file_type))
+
+
 @bot.command(name="anime")
 async def on_message(ctx, *args):
     # Ściąga losowy obrazek z gelbooru.com lub losowe zdjęcie z zadanego tagu
@@ -79,7 +129,7 @@ async def on_message(ctx, *args):
         r = random.randint(0, len(posts)-1)
         post = posts[r]
         image = post.get("file_url")
-        file_type = image.split(".")[-1]
+    file_type = image.split(".")[-1]
 
     async with aiohttp.ClientSession() as session:
         async with session.get(image) as resp:
@@ -94,9 +144,11 @@ async def on_message(ctx, *args):
 async def on_message(ctx, *args):
     # Ściąga losowy obrazek z safebooru.org lub losowe zdjęcie z zadanego tagu
     if not args:
-        query = urlopen("https://safebooru.org/index.php?page=post&s=random")
+        r = random.randint(0, 2000000)
+        query = urlopen("https://safebooru.org/index.php?page=dapi&s=post&q=index&id=" + str(r))
         soup = bs.BeautifulSoup(query, "html.parser")
-        image = soup.find(id="image").get("src")
+        post = soup.find("post")
+        image = post.get("file_url")
     else:
         if len(args) > 1:
             tag = "_".join(args).lower()
@@ -128,7 +180,7 @@ async def on_message(ctx, *args):
         r = random.randint(0, len(posts)-1)
         post = posts[r]
         image = post.get("file_url")
-        file_type = image.split(".")[-1]
+    file_type = image.split(".")[-1]
     async with aiohttp.ClientSession() as session:
         async with session.get(image) as resp:
             if resp.status != 200:
