@@ -198,9 +198,12 @@ async def on_message(ctx, number_of_teams=2, game=None):
     elif ctx.author.voice and ctx.author.voice.channel:
         channel = ctx.guild.get_channel(ctx.author.voice.channel.id)
         channel_members = channel.members
+        bots_numbers = []
         for i in range(len(channel_members)):
             if channel_members[i].bot:
-                channel_members.pop(i)
+                bots_numbers.append(i)
+        for number in bots_numbers:
+            channel_members.pop(number)
         number_of_members = len(channel_members)
         if number_of_teams > number_of_members:
             await ctx.send("Debilu za dużo drużyn a za mało zawodników")
