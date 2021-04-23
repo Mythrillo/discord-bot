@@ -21,6 +21,21 @@ async def on_message(ctx):
     await ctx.send("to cwel", delete_after=5)
 
 
+@bot.command(name="besty")
+async def on_message(ctx):
+    query = urlopen("https://besty.pl/losuj")
+    soup = bs.BeautifulSoup(query, "html.parser")
+    posts = soup.find_all("img", {"class": "img-responsive"}, limit=2)
+    image = posts[1].get("src")
+    file_type = image.split(".")[-1]
+    async with aiohttp.ClientSession() as session:
+        async with session.get(image) as resp:
+            if resp.status != 200:
+                await ctx.send("Nie da się ściagnąć ;(")
+                return
+            data = io.BytesIO(await resp.read())
+            await ctx.send(file=discord.File(data, "Super-obrazek." + file_type))
+
 @bot.command(name="role")
 async def on_message(ctx):
     roles = ["Top", "Mid", "Jungle", "Support", "Marksman"]
