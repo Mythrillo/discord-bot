@@ -21,11 +21,6 @@ async def on_message(ctx):
     await ctx.send("to cwel", delete_after=5)
 
 
-@bot.command(name="leave")
-async def on_message(ctx):
-    await ctx.guild.leave()
-
-
 @bot.command(name="besty")
 async def on_message(ctx):
     query = urlopen("https://besty.pl/losuj")
